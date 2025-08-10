@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Desk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Your desk HTML goes here -->
+  <h1 class="text-center text-3xl font-bold mt-8">My Digital Desk</h1>
+  <button id="add-note" class="block mx-auto mt-4 bg-blue-500 text-white px-4 py-2 rounded">Add Test Note</button>
+
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQrV1LUlaDv0mWZv04rUmysTp7D7h6Njw",
+      authDomain: "digital-desk-47759.firebaseapp.com",
+      projectId: "digital-desk-47759",
+      storageBucket: "digital-desk-47759.firebasestorage.app",
+      messagingSenderId: "1005169541607",
+      appId: "1:1005169541607:web:aa00eb4bcedb1fc1473d42"
+    };
+
+    const appId = 'digital-desk'; // stable ID for Firestore path
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Sign in anonymously
+    signInAnonymously(auth)
+      .then(() => {
+        console.log("✅ Signed in anonymously");
+      })
+      .catch((error) => {
+        console.error("❌ Anonymous sign-in failed:", error);
+      });
+
+    // Example: add a note to Firestore
+    document.getElementById('add-note').addEventListener('click', async () => {
+      try {
+        await addDoc(
+          collection(db, 'artifacts', appId, 'public', 'data', 'post-it-notes'),
+          {
+            text: "Hello from my desk!",
+            createdAt: serverTimestamp()
+          }
+        );
+        console.log("✅ Note added to Firestore");
+      } catch (err) {
+        console.error("❌ Error adding note:", err);
+      }
+    });
+  </script>
+</body>
+</html>
