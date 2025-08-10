@@ -3,22 +3,498 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digital Desk</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
+  <title>Shrikant Damani - The Digital Desk</title>
 
-  <!-- Your desk HTML goes here -->
-  <h1 class="text-center text-3xl font-bold mt-8">My Digital Desk</h1>
-  <button id="add-note" class="block mx-auto mt-4 bg-blue-500 text-white px-4 py-2 rounded">Add Test Note</button>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Kalam:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --text-color: #1f2937;
+      --text-color-dark: #d4d4d8;
+      --item-bg: #ffffff;
+      --item-bg-dark: #404040;
+      --item-border: #e5e7eb;
+      --item-border-dark: #525252;
+      --modal-bg: rgba(0, 0, 0, 0.5);
+      --modal-bg-dark: rgba(0, 0, 0, 0.7);
+      --canvas-bg: #333;
+    }
+    .dark {
+      --text-color: var(--text-color-dark);
+      --item-bg: var(--item-bg-dark);
+      --item-border: var(--item-border-dark);
+      --modal-bg: var(--modal-bg-dark);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.3s ease;
+      perspective: 1800px;
+      background-color: var(--canvas-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body { perspective: none; }
+      #desk-container { transform: none !important; transition: none !important; }
+      #cleo-cat { transition: none !important; }
+    }
+
+    .handwritten { font-family: 'Kalam', cursive; }
+
+    #desk-container {
+      position: relative;
+      width: 90vw;
+      height: 90vh;
+      max-width: 1400px;
+      max-height: 800px;
+      background-image: url('Desk.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-color: #2f2f2f; /* prevents white flash before image */
+      overflow: hidden;
+      transition: filter 0.3s ease, transform 0.5s ease;
+      border-radius: 20px;
+      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.4);
+      transform: rotateX(8deg);
+    }
+    .dark #desk-container { filter: brightness(0.6); }
+
+    .desk-item {
+      position: absolute;
+      transition: transform 0.2s ease-in-out, z-index 0s 0.2s;
+      cursor: pointer;
+    }
+    .desk-item:hover { transform: translateY(-5px) scale(1.03); z-index: 99 !important; transition: transform 0.2s ease-in-out, z-index 0s; }
+    .desk-item:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
+
+    .desk-item-content {
+      background-color: var(--item-bg);
+      border: 1px solid var(--item-border);
+      border-radius: 8px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 1rem;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    #laptop-link, #secret-button-link { display: block; text-decoration: none; }
+
+    #polaroid .desk-item-content { padding: 0.75rem; padding-bottom: 2.5rem; }
+    #polaroid img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--item-border); }
+    #polaroid .caption { position: absolute; bottom: 0.5rem; left: 0; right: 0; text-align: center; font-size: 0.875rem; }
+
+    /* Illustrated items */
+    .desk-item-illustrated { background: transparent !important; border: none !important; box-shadow: none !important; }
+    .desk-item-illustrated img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 3px rgba(0,0,0,0.2)); transition: filter 0.2s ease-in-out; }
+    .desk-item:hover .desk-item-illustrated img { filter: drop-shadow(0 8px 8px rgba(0,0,0,0.25)); }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background-color: var(--modal-bg); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content { background-color: var(--item-bg); color: var(--text-color); padding: 2.5rem; border-radius: 12px; max-width: 600px; width: 90%; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transform: scale(0.95); transition: transform 0.3s ease; max-height: 80vh; overflow-y: auto; position: relative; }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+    .modal-content h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+    .modal-content p { margin-bottom: 1rem; line-height: 1.6; }
+    .modal-close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); }
+
+    /* Timeline, List, Gallery */
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background-color: var(--item-border); }
+    .timeline-item { position: relative; margin-bottom: 2rem; }
+    .timeline-item::before { content: ''; position: absolute; left: -2rem; top: 0.25rem; width: 12px; height: 12px; border-radius: 50%; background-color: #4f46e5; border: 2px solid var(--item-bg); }
+    .timeline-date { font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem; }
+    .timeline-company { font-size: 1.25rem; font-weight: 600; }
+    .timeline-role { font-style: italic; color: #475569; margin-bottom: 0.5rem; }
+    .timeline-desc { font-size: 0.95rem; color: #334155; }
+    .dark .timeline-desc { color: #d4d4d8; }
+    .dark .timeline-role { color: #9ca3af; }
+
+    .media-list { list-style: none; padding: 0; column-count: 2; column-gap: 2rem; }
+    .media-list li { padding: 0.25rem 0; }
+    @media (max-width: 640px) { .media-list { column-count: 1; } }
+
+    .cleo-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .cleo-gallery img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
+
+    .note-display-area { background-color: #fef9c3; border: 1px solid #fde047; padding: 1rem; border-radius: 8px; min-height: 100px; }
+    .dark .note-display-area { background-color: #424242; border-color: #616161; }
+    .note { background-color: #fffbe9; padding: 0.5rem 1rem; border-radius: 4px; margin-bottom: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .dark .note { background-color: #4e4e4e; }
+    .notebook-entry { border-bottom: 1px solid var(--item-border); padding-bottom: 1rem; margin-bottom: 1rem; }
+    .notebook-entry:last-child { border-bottom: none; }
+
+    /* Positions & Z-Index */
+    #laptop-link { top: 15%; left: 50%; transform: translateX(-50%); width: 26rem; height: 16rem; z-index: 20; }
+    #notebook { top: 58%; left: 50%; transform: translateX(-40%) rotate(4deg); width: 15rem; height: 12rem; z-index: 30; }
+    #post-it { top: 18%; left: 65%; width: 5rem; height: 5rem; z-index: 25; }
+    #desk-lamp { top: 2%; left: 3%; width: 9rem; height: 13rem; z-index: 10; }
+    #thermometer { top: 5%; left: 15%; width: 3rem; height: 9rem; z-index: 10; }
+    #polaroid { top: 25%; left: 5%; width: 7rem; height: 8rem; transform: rotate(-8deg); z-index: 20; }
+    #telephone { top: 8%; right: 8%; width: 8rem; height: 8rem; z-index: 10; }
+    #rolodex { bottom: 5%; left: 5%; width: 10rem; height: 8rem; z-index: 40; }
+    #kindle { bottom: 7%; left: 20%; width: 7rem; height: 9rem; transform: rotate(-5deg); z-index: 40; }
+    #coffee { bottom: 10%; right: 10%; width: 5.5rem; height: 5.5rem; z-index: 50; }
+    #tv-remote { bottom: 20%; right: 18%; width: 3.5rem; height: 8rem; transform: rotate(15deg); z-index: 45; }
+    #movie-tickets { bottom: 5%; right: 25%; width: 8rem; height: 4.5rem; transform: rotate(-15deg); z-index: 50; }
+    #crumpled-paper { bottom: 3%; right: 3%; width: 4rem; height: 4rem; z-index: 60; }
+    #secret-button-link { bottom: 2%; left: 2%; width: 1rem; height: 1rem; z-index: 60; }
+    #cleo-cat { position: absolute; bottom: 0; left: -100px; width: 80px; height: 80px; transition: left 5s linear, bottom 1s ease, right 1s ease; z-index: 100; cursor: pointer; }
+
+    #mobile-fallback { display: none; padding: 2rem; text-align: center; background-color: #f8fafc; height: 100vh; align-items: center; justify-content: center; flex-direction: column; }
+    @media (max-width: 768px) {
+      body { perspective: none; display: block; }
+      #desk-container { display: none; }
+      #mobile-fallback { display: flex; }
+    }
+
+    /* Dark-mode overrides for Tailwind utility colors used in content */
+    .dark .text-gray-600 { color: #d4d4d8 !important; }
+    .dark .text-gray-500 { color: #9ca3af !important; }
+  </style>
+</head>
+<body>
+  <div id="desk-container">
+    <!-- Desk items (with lazy images) -->
+    <a id="laptop-link" href="https://www.linkedin.com/in/shrikant-damani/" target="_blank" rel="noopener noreferrer" class="desk-item desk-item-illustrated" aria-label="Open LinkedIn profile">
+      <img src="Laptop open.jpeg" alt="Laptop with LinkedIn logo" loading="lazy" />
+    </a>
+
+    <div id="polaroid" class="desk-item" aria-label="About me">
+      <div class="desk-item-content">
+        <img src="Screenshot 2025-08-10 192102.png" onerror="this.onerror=null;this.src='https://placehold.co/400x400/E2E8F0/334155?text=Image+not+found';" alt="A photo of Shrikant Damani" loading="lazy" />
+        <div class="caption handwritten">That's me!</div>
+      </div>
+    </div>
+
+    <div id="rolodex" class="desk-item desk-item-illustrated" aria-label="Experience">
+      <img src="Rolodex.jpeg" alt="Rolodex for work experience" loading="lazy" />
+    </div>
+    <div id="telephone" class="desk-item desk-item-illustrated" aria-label="Contact">
+      <img src="Phone.jpeg" alt="Telephone for contact info" loading="lazy" />
+    </div>
+    <div id="thermometer" class="desk-item desk-item-illustrated" aria-label="Education">
+      <img src="Thermometer.jpeg" alt="Thermometer for education" loading="lazy" />
+    </div>
+    <div id="notebook" class="desk-item desk-item-illustrated" aria-label="Collaborative notebook">
+      <img src="Notebook.jpeg" alt="Notebook for collaborative thoughts" loading="lazy" />
+    </div>
+    <div id="coffee" class="desk-item desk-item-illustrated" aria-label="Coffee break">
+      <img src="Coffee.jpeg" alt="Coffee cup" loading="lazy" />
+    </div>
+    <div id="kindle" class="desk-item desk-item-illustrated" aria-label="Digital library">
+      <img src="Kindle.jpeg" alt="Kindle for reading list" loading="lazy" />
+    </div>
+    <div id="tv-remote" class="desk-item desk-item-illustrated" aria-label="TV shows">
+      <img src="Remote.jpeg" alt="TV Remote for shows" loading="lazy" />
+    </div>
+    <div id="movie-tickets" class="desk-item desk-item-illustrated" aria-label="Favorite movies">
+      <img src="Movie.jpeg" alt="Movie tickets" loading="lazy" />
+    </div>
+    <div id="desk-lamp" class="desk-item desk-item-illustrated" aria-label="Toggle theme">
+      <img src="Lamp.jpeg" alt="Desk lamp to toggle theme" loading="lazy" />
+    </div>
+    <div id="crumpled-paper" class="desk-item desk-item-illustrated" aria-label="Silly to-do list">
+      <img src="Paper.jpeg" alt="Crumpled paper ball" loading="lazy" />
+    </div>
+    <div id="post-it" class="desk-item" style="transform: rotate(8deg);" aria-label="Leave a note">
+      <div class="desk-item-content handwritten" style="background-color: #fef08a;"><span>Leave a note!</span></div>
+    </div>
+    <a id="secret-button-link" href="https://music.youtube.com/watch?v=QBK6xymmKHM&si=dvnUmgNmyPv01m55" target="_blank" rel="noopener noreferrer" class="desk-item" aria-label="Secret music link">
+      <div class="desk-item-content" style="background-color: rgba(0,0,0,0.2); border-radius: 50%;"></div>
+    </a>
+    <div id="cleo-cat" class="desk-item desk-item-illustrated" aria-label="Cleo the cat">
+      <img src="Cleo.jpeg" alt="Cleo the cat" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="about-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="about-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="about-title">The Person Behind the Desk</h2>
+      <p>Hi! My name is Shrikant Damani.</p>
+      <p>Allow me to welcome you to my humble online abode. Since I spend most of my waking hours here, my desk is probably the most honest reflection of me you're likely to find.</p>
+      <p>I'd read somewhere that first impressions are made in about 12 seconds. The average adult reading speed is 200-250 words per minute, which means I have about 48 words to make a good impression here. This desk is my shortcut. Oh well. Batman.</p>
+      <p>I am a certified Chartered Accountant with an MBA in strategic marketing from MICA. In other words, I can do the math needed in the first paragraph with ease, while also arranging the items on this desk in a way that is, hopefully, a little interesting.</p>
+      <p>This desk is a labor of love, and the result of an almost compulsive need to arrange my thoughts visually. It's an online journal told through the objects I keep around. You'll find a mix of the mindful and the mindless here. There will, invariably, be brief, meandering segues wherein things will get heavy, probably sitting right next to a bad pun. You have been warned.</p>
+      <p>Each item is a different part of my story, a different corner of my mind. I'm here to document, not just to create.</p>
+      <p>So please, feel free to look around. Click on things. Be curious. Thanks for stopping by.</p>
+    </div>
+  </div>
+
+  <div id="contact-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="contact-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="contact-title">Get In Touch</h2>
+      <p>For personal queries, or just to say hi, you can reach me at: <a href="mailto:s.damani30@gmail.com" class="text-indigo-600 hover:underline">s.damani30@gmail.com</a></p>
+      <p class="mt-4">My day job involves telling stories for brands at 91Ninjas. If you have a brand with a story that needs telling, let's connect at my professional inbox: <a href="mailto:shrikant@91ninjas.com" class="text-indigo-600 hover:underline">shrikant@91ninjas.com</a></p>
+    </div>
+  </div>
+
+  <div id="experience-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="experience-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="experience-title">My Journey</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <p class="timeline-date">2024 - Present</p>
+          <h3 class="timeline-company">91Ninjas</h3>
+          <p class="timeline-role">Brand Lead</p>
+          <p class="timeline-desc">"If you know exactly what you want to be in life, you will invariably become it; that is your punishment." – Oscar Wilde. I knew pretty early on that I wanted to become a Chartered Accountant, so I became one. Then I realised that I really wanted to become a marketer. So, I did an MBA, made the switch, and became a marketer. But for the past year or so, I had no idea what my career path would look like. I took a break after my previous job to regroup and allowed curiosity to guide me—and that journey has brought me to 91Ninjas. I believe now, more than ever, that curiosity is a better compass than certainty. I'm thrilled to share that I've joined 91Ninjas, where I'll be leading the brand team. I can’t wait to see what the future holds for me—and, honestly, I love not knowing.</p>
+        </div>
+        <div class="timeline-item">
+          <p class="timeline-date">2022 - 2024</p>
+          <h3 class="timeline-company">Scalenut</h3>
+          <p class="timeline-role">Manager - Growth</p>
+          <p class="timeline-desc">'Never stop learning' is the mantra that I have been embodying in my time at Scalenut. I have had the opportunity to learn, first hand, how a SaaS product is built, marketed, and improved. I have learned how to write engaging copy, learned the first principles of website designing, prompt engineering, and believe it or not - coding! Yes, this Chartered accountant turned marketeer turned prompt engineer can debug code. I can't quite code yet but never say never!</p>
+        </div>
+        <div class="timeline-item">
+          <p class="timeline-date">2021 - 2022</p>
+          <h3 class="timeline-company">Future Consumer Limited</h3>
+          <p class="timeline-role">Assistant Manager - Marketing & Branding</p>
+          <p class="timeline-desc">'Nothing is permanent' is the lesson that I learned at FCL. Not your highs/lows, your job, or even your company. At FCL, I managed the strategy and development for brands such as Karmiq, Fresh & Pure, Ektaa, and Desi Atta Company. It was an incredibly enriching experience that was abruptly cut short due to an unprecedented force being applied by the invisible hand.</p>
+        </div>
+        <div class="timeline-item">
+          <p class="timeline-date">2021</p>
+          <h3 class="timeline-company">Vishvaraj Environment Pvt Ltd</h3>
+          <p class="timeline-role">Manager - Chairman & Managing Director's Office</p>
+          <p class="timeline-desc">After a bitter-sweet COVID-19 infested graduation - it was time to get back to the corporate world, albeit in a different department. At Vishvaraj, I was tasked with the formulation of a PR strategy focused on revamping the digital presence of the company along with providing strategic counsel to the C-suite for new business opportunities and potential investments.</p>
+        </div>
+        <div class="timeline-item">
+          <p class="timeline-date">2019</p>
+          <h3 class="timeline-company">Happily Unmarried Pvt Ltd (Ustraa)</h3>
+          <p class="timeline-role">Marketing Intern</p>
+          <p class="timeline-desc">It was time to marry the theory I had studied at my first year of MBA with the live environment of working for a company. At Ustraa, I had the chance to conduct primary research in order to garner consumer insights and to study consumer behavior. I also had the opportunity to conduct a feasibility study for a potential product and recommend future course of action for the same.</p>
+        </div>
+        <div class="timeline-item">
+          <p class="timeline-date">2018 - 2019</p>
+          <h3 class="timeline-company">TDKR Technologies Pvt Ltd (a.k.a. Kasa Kai Mumbai)</h3>
+          <p class="timeline-role">Marketing Associate</p>
+          <p class="timeline-desc">After a rewarding experience at an MNC, it was time, in my career, to experience the world of start-ups. At Kasa Kai Mumbai, I got the opportunity to conceptualise and execute numerous cultural events across the city - ranging from sports events to exclusive Game of Thrones screenings.</p>
+        </div>
+        <div class="timeline-item">
+          <p class="timeline-date">2016 - 2018</p>
+          <h3 class="timeline-company">Morgan Stanley</h3>
+          <p class="timeline-role">Associate</p>
+          <p class="timeline-desc">I had the privilege of experiencing how a multinational corporation operates and was one of the Risk Managers for MS's proprietary hedge fund platform known as 'Fundlogic SAS'. Incidentally, I was exposed to the marketing/business side of things for the first time which absolutely enthralled me and defined my career path going ahead.</p>
+        </div>
+        <div class="timeline-item">
+          <p class="timeline-date">2013 - 2016</p>
+          <h3 class="timeline-company">Karnavat & Co</h3>
+          <p class="timeline-role">Article Associate</p>
+          <p class="timeline-desc">I had the opportunity to work with companies across various sectors including banking, manufacturing, retail, service providers etc. wherein I conducted audits (Internal, Statutory) based on comprehensive audit plans.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="education-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="education-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="education-title">My Various Degrees</h2>
+      <p class="text-center italic text-gray-500 mb-6">You found my thermometer! Here are the various degrees I've collected over the years.</p>
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-xl font-semibold">PGDM - C (MBA)</h3>
+          <p class="text-md text-gray-600">MICA - The School of Ideas (2021)</p>
+          <p class="mt-1 text-sm">A two year residential MBA programme specialising in Marketing & Communications.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold">Chartered Accountancy (CA)</h3>
+          <p class="text-md text-gray-600">The Institute of Chartered Accountants of India (2016)</p>
+          <p class="mt-1 text-sm">Qualified as a CA in 2016. Cleared all 3 levels (CPT, IPCC, and Final) in the first attempt.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold">B.Com (Graduation)</h3>
+          <p class="text-md text-gray-600">Mumbai University (2015)</p>
+          <p class="mt-1 text-sm">Graduated in 2015 from Mumbai University.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="kindle-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="kindle-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="kindle-title">My Digital Library</h2>
+      <p class="text-center italic text-gray-500 mb-6">A peek into what I'm reading and what I've loved.</p>
+      <h3 class="text-lg font-semibold mb-2">Currently Reading</h3>
+      <ul class="media-list mb-6">
+        <li>The Complete Robot by Isaac Asimov</li>
+        <li>Notes from the Underground by Fyodor Dostoevsky</li>
+      </ul>
+      <h3 class="text-lg font-semibold mb-2">All-Time Favorites</h3>
+      <ul class="media-list mb-6">
+        <li>The Hitchhiker's Guide to the Galaxy</li>
+        <li>The Three-Body Problem Trilogy</li>
+        <li>Project Hail Mary</li>
+        <li>Kitchen Confidential</li>
+        <li>The Murder of Roger Ackroyd</li>
+        <li>The Hound of the Baskervilles</li>
+        <li>Tuesdays with Morrie</li>
+        <li>The Shiva Trilogy</li>
+        <li>Papillon</li>
+        <li>If on a winter's night a traveler</li>
+        <li>De Profundis</li>
+        <li>The Gambler</li>
+      </ul>
+      <div class="mt-8 pt-6 border-t border-[var(--item-border)]">
+        <h3 class="text-lg font-semibold text-center">Got a recommendation?</h3>
+        <p class="text-center text-sm text-gray-600 mb-4">I'm always looking for my next great read.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Thanks for the rec!');">
+          <input type="text" placeholder="Book Title & Author" class="flex-grow p-2 border border-[var(--item-border)] rounded-md bg-transparent" />
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="movie-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="movie-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="movie-title">My All-Time Favorites</h2>
+      <p class="text-center italic text-gray-500 mb-6">This list isn't in any particular order, but it's a good guide to the stories I love to re-watch.</p>
+      <ul class="media-list mb-6">
+        <li>The Shawshank Redemption</li><li>The Dark Knight Trilogy</li><li>Inception</li><li>The Prestige</li><li>Interstellar</li><li>Pulp Fiction</li><li>Reservoir Dogs</li><li>Kill Bill: Vol. 1 & 2</li><li>Chungking Express</li><li>In the Mood for Love</li><li>Fight Club</li><li>The Matrix</li><li>The Silence of the Lambs</li><li>Spirited Away</li><li>Parasite</li><li>Snowpiercer</li><li>Dune: Part One & Two</li><li>Mad Max: Fury Road</li><li>Avengers: Infinity War</li><li>Eternal Sunshine of the Spotless Mind</li><li>Taare Zameen Par</li><li>The Truman Show</li><li>Prisoners</li><li>V for Vendetta</li><li>Inside Out 1 & 2</li><li>The Before Trilogy</li><li>Gangs of Wasseypur</li>
+      </ul>
+      <div class="mt-8 pt-6 border-t border-[var(--item-border)]">
+        <h3 class="text-lg font-semibold text-center">Have a movie for me?</h3>
+        <p class="text-center text-sm text-gray-600 mb-4">I'm always looking for something new to watch.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Added to the list!');">
+          <input type="text" placeholder="Movie Title" class="flex-grow p-2 border border-[var(--item-border)] rounded-md bg-transparent" />
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Recommend</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="tv-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="tv-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="tv-title">Shows Worth a Binge</h2>
+      <p class="text-center italic text-gray-500 mb-6">My personal list of highly re-watchable shows, in no particular order.</p>
+      <ul class="media-list mb-6">
+        <li>The West Wing</li><li>Breaking Bad</li><li>Chernobyl</li><li>Sherlock</li><li>The Office</li><li>Clarkson's Farm</li><li>Parks & Rec</li><li>Death Note</li><li>TVF Pitchers</li><li>The Pitt</li><li>True Detective (S01)</li><li>Taskmaster</li><li>Succession</li><li>Bojack Horseman</li><li>Ted Lasso</li><li>Black Mirror</li><li>Fleabag</li><li>Severance</li><li>House M.D.</li><li>Sarabhai vs Sarabhai</li><li>Mindhunter</li><li>Shōgun</li><li>The Newsroom</li><li>Mr. Robot</li><li>The Bear</li><li>Schitt's Creek</li>
+      </ul>
+      <div class="mt-8 pt-6 border-t border-[var(--item-border)]">
+        <h3 class="text-lg font-semibold text-center">Know a great show?</h3>
+        <p class="text-center text-sm text-gray-600 mb-4">Let me know what I should watch next.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Thanks!');">
+          <input type="text" placeholder="Show Title" class="flex-grow p-2 border border-[var(--item-border)] rounded-md bg-transparent" />
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Recommend</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="coffee-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="coffee-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="coffee-title">A Quick Coffee Break</h2>
+      <p>I started drinking black coffee a couple of years back. I was always put off by it because of the instant coffees, but then a friend introduced me to the <a href="#" class="text-indigo-600 hover:underline">Aeropress</a> and nothing has been the same since.</p>
+      <p>It has become a nice ritual for me in the morning. <a href="#" class="text-indigo-600 hover:underline">James Hoffman</a> helped me perfect the recipe and <a href="#" class="text-indigo-600 hover:underline">Blue Tokai</a> helped me with the coffee beans.</p>
+      <p class="font-semibold">If you are on the fence about trying coffee, here's your signal to go for it.</p>
+    </div>
+  </div>
+
+  <div id="crumpled-paper-modal" class="modal-overlay">
+    <div class="modal-content handwritten" role="dialog" aria-modal="true" aria-labelledby="todo-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="todo-title" class="text-2xl">A To-Do List I Found...</h2>
+      <ul class="list-none p-0 mt-4 text-lg">
+        <li class="p-2">Learn 3,124 digits of Pi. <span class="text-sm italic text-gray-500">(Got to 3.14159, then got hungry).</span></li>
+        <li class="p-2">Master the harmonica. <span class="text-sm italic text-gray-500">(Discovered my breathing is less 'bluesy,' more 'panicked').</span></li>
+        <li class="p-2">Become a kalimba virtuoso. <span class="text-sm italic text-gray-500">(My cat filed a formal noise complaint).</span></li>
+        <li class="p-2">Train for a marathon. <span class="text-sm italic text-gray-500">(The training shoes still look brand new. A victory in itself).</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="cleo-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="cleo-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="cleo-title">Meet Cleo: The Queen of the Desk</h2>
+      <p>Cleo came into my life on March 8th, 2025—yes, on International Women's Day, which feels just right. She was a three-month-old orange Abyssinian, and from the start, she was long, muscular, and absolutely gorgeous.</p>
+      <p>She's named after the great queen Cleopatra, because Cleo herself is nothing short of royalty. She's confident, social, and incredibly intelligent. She even taught herself how to play fetch, a skill she's very proud of. She's the true ruler of this desk, and I just love her for it.</p>
+      <div class="cleo-gallery mt-6">
+        <img src="WhatsApp Image 2025-08-10 at 20.51.29_13ca5d37.jpg" alt="Cleo sleeping" loading="lazy" />
+        <img src="WhatsApp Image 2025-08-10 at 20.51.29_19f8cad5.jpg" alt="Cleo stretching" loading="lazy" />
+        <img src="WhatsApp Image 2025-08-10 at 20.51.29_76cc2d46.jpg" alt="Cleo looking sleepy" loading="lazy" />
+        <img src="WhatsApp Image 2025-08-10 at 20.51.30_cee57ab9.jpg" alt="Cleo sitting on a mat" loading="lazy" />
+        <img src="WhatsApp Image 2025-08-10 at 20.51.31_91f9fc66.jpg" alt="A close-up of Cleo" loading="lazy" />
+        <img src="WhatsApp Image 2025-08-10 at 20.51.30_7bc0b201.jpg" alt="Cleo looking like Scooby-Doo" loading="lazy" />
+      </div>
+    </div>
+  </div>
+
+  <div id="post-it-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="postit-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="postit-title">Leave a Note</h2>
+      <p class="text-sm text-gray-500">Leave a short, anonymous note on the desk for others to see.</p>
+      <form id="post-it-form" class="flex gap-2 mt-4">
+        <input id="post-it-input" type="text" placeholder="Your note..." class="flex-grow p-2 border border-[var(--item-border)] rounded-md bg-transparent" maxlength="100" />
+        <button type="submit" class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-md">Stick it</button>
+      </form>
+      <div class="mt-6">
+        <h3 class="font-semibold mb-2">Recent Notes:</h3>
+        <div id="post-it-display" class="note-display-area handwritten"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="notebook-modal" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="notebook-title">
+      <button class="modal-close-btn" aria-label="Close">&times;</button>
+      <h2 id="notebook-title">The Collaborative Notebook</h2>
+      <p class="text-sm text-gray-500">Read stories and thoughts from other visitors, or share your own.</p>
+      <div class="mt-6 pt-6 border-t border-[var(--item-border)]">
+        <h3 class="text-lg font-semibold">Share a Story</h3>
+        <form id="notebook-form" class="flex flex-col gap-2 mt-2">
+          <input id="notebook-title-input" type="text" placeholder="Title of your entry" class="p-2 border border-[var(--item-border)] rounded-md bg-transparent" required />
+          <textarea id="notebook-story-input" placeholder="Your story or thought..." rows="4" class="p-2 border border-[var(--item-border)] rounded-md bg-transparent" required></textarea>
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md self-start">Submit</button>
+        </form>
+      </div>
+      <div class="mt-6">
+        <h3 class="font-semibold mb-2">Recent Entries:</h3>
+        <div id="notebook-display"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mobile-fallback">
+    <div class="bg-white p-8 rounded-lg shadow-xl">
+      <h1 class="text-2xl font-bold text-gray-800">Welcome!</h1>
+      <p class="mt-4 text-gray-600">The full interactive desk experience is best on a bigger screen.</p>
+      <p class="mt-2 text-gray-600">The mobile "Digital Backpack" is coming soon. For now, please check this out on a desktop!</p>
+    </div>
+  </div>
 
   <script type="module">
-    // Firebase imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Your Firebase config
+    // Theme: restore user's preference or system default
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.body.classList.add('dark');
+    }
+
+    // Your Firebase config (anonymous sign-in)
     const firebaseConfig = {
       apiKey: "AIzaSyCQrV1LUlaDv0mWZv04rUmysTp7D7h6Njw",
       authDomain: "digital-desk-47759.firebaseapp.com",
@@ -27,38 +503,224 @@
       messagingSenderId: "1005169541607",
       appId: "1:1005169541607:web:aa00eb4bcedb1fc1473d42"
     };
+    const appId = 'digital-desk';
 
-    const appId = 'digital-desk'; // stable ID for Firestore path
-
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    // Sign in anonymously
-    signInAnonymously(auth)
-      .then(() => {
-        console.log("✅ Signed in anonymously");
-      })
-      .catch((error) => {
-        console.error("❌ Anonymous sign-in failed:", error);
+    // --- Modal Logic ---
+    const allModals = document.querySelectorAll('.modal-overlay');
+    const closeButtons = document.querySelectorAll('.modal-close-btn');
+
+    let lastFocusedEl = null;
+
+    function closeAllModals() {
+      allModals.forEach((modal) => modal.classList.remove('active'));
+      if (lastFocusedEl) { lastFocusedEl.focus(); lastFocusedEl = null; }
+      document.removeEventListener('keydown', trapFocus);
+    }
+
+    function openModal(modal) {
+      if (!modal) return;
+      closeAllModals();
+      lastFocusedEl = document.activeElement;
+      modal.classList.add('active');
+      const focusables = modal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
+      if (focusables.length) focusables[0].focus();
+      document.addEventListener('keydown', trapFocus);
+    }
+
+    function trapFocus(e) {
+      if (e.key !== 'Tab') return;
+      const modal = document.querySelector('.modal-overlay.active');
+      if (!modal) return;
+      const focusables = [...modal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')].filter(el => !el.hasAttribute('disabled'));
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+      else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+    }
+
+    const openMap = {
+      polaroid: 'about-modal',
+      telephone: 'contact-modal',
+      rolodex: 'experience-modal',
+      thermometer: 'education-modal',
+      kindle: 'kindle-modal',
+      'movie-tickets': 'movie-modal',
+      'tv-remote': 'tv-modal',
+      coffee: 'coffee-modal',
+      'crumpled-paper': 'crumpled-paper-modal',
+      'cleo-cat': 'cleo-modal',
+      'post-it': 'post-it-modal',
+      notebook: 'notebook-modal',
+    };
+
+    Object.entries(openMap).forEach(([id, modalId]) => {
+      const el = document.getElementById(id);
+      const modal = document.getElementById(modalId);
+      if (!el || !modal) return;
+      el.addEventListener('click', () => openModal(modal));
+      el.setAttribute('tabindex', '0');
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(modal); }
+      });
+    });
+
+    closeButtons.forEach((btn) => btn.addEventListener('click', closeAllModals));
+    window.addEventListener('click', (e) => { if (e.target.classList.contains('modal-overlay')) closeAllModals(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
+
+    // --- Day/Night Toggle + persist
+    document.getElementById('desk-lamp').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // --- Cleo the Cat Animation ---
+    const cleo = document.getElementById('cleo-cat');
+    const desk = document.getElementById('desk-container');
+    let cleoWalkInterval;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function letCleoWalk() {
+      if (prefersReduced) return; // respect reduced motion
+      const fromLeft = Math.random() > 0.5;
+      cleo.style.transition = 'none';
+      if (fromLeft) {
+        cleo.style.left = '-100px';
+        cleo.style.right = 'auto';
+        cleo.style.transform = 'scaleX(1)';
+      } else {
+        cleo.style.left = 'auto';
+        cleo.style.right = 'calc(100% + 100px)';
+        cleo.style.transform = 'scaleX(-1)';
+      }
+      requestAnimationFrame(() => {
+        const duration = Math.random() * 5 + 5;
+        cleo.style.transition = `left ${duration}s linear, right ${duration}s linear, bottom 1s ease`;
+        if (fromLeft) { cleo.style.left = 'calc(100% + 100px)'; }
+        else { cleo.style.right = 'calc(100% + 100px)'; }
+      });
+    }
+
+    function startCleoWalk() {
+      if (cleoWalkInterval) clearInterval(cleoWalkInterval);
+      letCleoWalk();
+      cleoWalkInterval = setInterval(letCleoWalk, 15000);
+    }
+
+    cleo.addEventListener('click', () => {
+      clearInterval(cleoWalkInterval);
+      const cleoRect = cleo.getBoundingClientRect();
+      const deskRect = desk.getBoundingClientRect();
+      const leftWithinDesk = cleoRect.left - deskRect.left;
+      cleo.style.transition = 'left 1s ease, bottom 1s ease, right 1s ease';
+      cleo.style.left = `${leftWithinDesk}px`;
+      cleo.style.right = 'auto';
+      requestAnimationFrame(() => {
+        cleo.style.left = 'auto';
+        cleo.style.right = '5%';
+        cleo.style.bottom = '5%';
+      });
+    });
+
+    const cleoModal = document.getElementById('cleo-modal');
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((m) => {
+        if (m.attributeName === 'class' && !cleoModal.classList.contains('active')) {
+          startCleoWalk();
+        }
+      });
+    });
+    observer.observe(cleoModal, { attributes: true });
+    startCleoWalk();
+
+    // --- Firestore Logic ---
+    async function authAndInitFirestore() {
+      try {
+        await signInAnonymously(auth);
+        setupFirestoreListeners();
+      } catch (error) {
+        console.error('Authentication failed:', error);
+        alert('Anonymous sign-in failed. Check Firebase Authorized Domains and that Anonymous is enabled.');
+      }
+    }
+
+    function setupFirestoreListeners() {
+      // Post-it Notes
+      const postItForm = document.getElementById('post-it-form');
+      const postItInput = document.getElementById('post-it-input');
+      const postItDisplay = document.getElementById('post-it-display');
+      const postItsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'post-it-notes');
+
+      async function safeAdd(ref, data, button) {
+        try {
+          if (button) button.disabled = true;
+          await addDoc(ref, data);
+        } catch (err) {
+          console.error('Error saving:', err);
+          alert('Sorry, saving failed. Please try again.');
+        } finally {
+          if (button) button.disabled = false;
+        }
+      }
+
+      postItForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const noteText = postItInput.value.trim();
+        if (noteText) {
+          await safeAdd(postItsCollection, { text: noteText, createdAt: serverTimestamp() }, postItForm.querySelector('button'));
+          postItInput.value = '';
+        }
       });
 
-    // Example: add a note to Firestore
-    document.getElementById('add-note').addEventListener('click', async () => {
-      try {
-        await addDoc(
-          collection(db, 'artifacts', appId, 'public', 'data', 'post-it-notes'),
-          {
-            text: "Hello from my desk!",
-            createdAt: serverTimestamp()
-          }
-        );
-        console.log("✅ Note added to Firestore");
-      } catch (err) {
-        console.error("❌ Error adding note:", err);
-      }
-    });
+      const postItQuery = query(postItsCollection, orderBy('createdAt', 'desc'), limit(5));
+      onSnapshot(postItQuery, (snapshot) => {
+        postItDisplay.innerHTML = '';
+        snapshot.forEach((doc) => {
+          const note = document.createElement('div');
+          note.className = 'note';
+          note.textContent = doc.data().text;
+          postItDisplay.appendChild(note);
+        });
+      }, (error) => console.error('Error fetching post-its:', error));
+
+      // Notebook entries
+      const notebookForm = document.getElementById('notebook-form');
+      const notebookTitleInput = document.getElementById('notebook-title-input');
+      const notebookStoryInput = document.getElementById('notebook-story-input');
+      const notebookDisplay = document.getElementById('notebook-display');
+      const notebookCollection = collection(db, 'artifacts', appId, 'public', 'data', 'notebook-entries');
+
+      notebookForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = notebookTitleInput.value.trim();
+        const story = notebookStoryInput.value.trim();
+        if (title && story) {
+          await safeAdd(notebookCollection, { title, story, createdAt: serverTimestamp() }, notebookForm.querySelector('button'));
+          notebookTitleInput.value = '';
+          notebookStoryInput.value = '';
+        }
+      });
+
+      const notebookQuery = query(notebookCollection, orderBy('createdAt', 'desc'), limit(10));
+      onSnapshot(notebookQuery, (snapshot) => {
+        notebookDisplay.innerHTML = '';
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const entry = document.createElement('div');
+          entry.className = 'notebook-entry';
+          entry.innerHTML = `<h4 class="font-semibold text-lg">${data.title}</h4><p class="text-sm text-gray-600">${data.story}</p>`;
+          notebookDisplay.appendChild(entry);
+        });
+      }, (error) => console.error('Error fetching notebook entries:', error));
+    }
+
+    authAndInitFirestore();
   </script>
 </body>
 </html>
