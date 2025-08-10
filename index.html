@@ -41,7 +41,90 @@
     }
     @media (prefers-reduced-motion: reduce) {
       body { perspective: none; }
-      #desk-container { transform: none !important; transition: none !important; }
+      #desk-container {
+      position: relative;
+      width: 90vw;
+      height: 90vh;
+      max-width: 1400px;
+      max-height: 800px;
+      background-image: url('Desk.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-color: #2f2f2f; /* prevents white flash before image */
+      overflow: hidden;
+      transition: filter 0.3s ease, transform 0.5s ease;
+      border-radius: 20px;
+      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.4);
+      transform: rotateX(8deg);
+      filter: brightness(0.98) contrast(1.05);
+    }
+    /* vignette + subtle grain to make the desk feel physical */
+    #desk-container::before {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
+      mix-blend-mode: multiply; opacity: .8;
+    }
+    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
+    /* vignette + subtle grain to make the desk feel physical */
+    #desk-container::before {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
+      mix-blend-mode: multiply; opacity: .8;
+    }
+    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
+    /* vignette + subtle grain to make the desk feel physical */
+    #desk-container::before {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
+      mix-blend-mode: multiply; opacity: .8;
+    }
+    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
+    /* vignette + subtle grain to make the desk feel physical */
+    #desk-container::before {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
+      mix-blend-mode: multiply; opacity: .8;
+    }
+    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
+    /* vignette + subtle grain to make the desk feel physical */
+    #desk-container::before {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
+      mix-blend-mode: multiply; opacity: .8;
+    }
+    .dark #desk-container { filter: brightness(0.6) contrast(1.05); } 90vh;
+      max-width: 1400px;
+      max-height: 800px;
+      background-image: url('Desk.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-color: #2f2f2f; /* prevents white flash before image */
+      overflow: hidden;
+      transition: filter 0.3s ease, transform 0.5s ease;
+      border-radius: 20px;
+      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.4);
+      transform: rotateX(8deg);
+      filter: brightness(0.98) contrast(1.05);
+    }
+    /* vignette + subtle grain to make the desk feel physical */
+    #desk-container::before {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
+      mix-blend-mode: multiply; opacity: .8;
+    }
+    .dark #desk
       #cleo-cat { transition: none !important; }
     }
 
@@ -70,6 +153,44 @@
       transition: transform 0.2s ease-in-out, z-index 0s 0.2s;
       cursor: pointer;
     }
+    /* soft floor shadow so items sit on the desk */
+    .desk-item::after {
+      content: '';
+      position: absolute;
+      left: 10%; right: 10%; bottom: -10px; height: 18px;
+      background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
+      filter: blur(6px);
+      opacity: .35;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .desk-item:hover { transform: translateY(-5px) scale(1.03); z-index: 99 !important; transition: transform 0.2s ease-in-out, z-index 0s; }
+    .desk-item:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
+    /* soft floor shadow so items sit on the desk */
+    .desk-item::after {
+      content: '';
+      position: absolute;
+      left: 10%; right: 10%; bottom: -10px; height: 18px;
+      background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
+      filter: blur(6px);
+      opacity: .35;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .desk-item:hover { transform: translateY(-5px) scale(1.03); z-index: 99 !important; transition: transform 0.2s ease-in-out, z-index 0s; }
+    .desk-item:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
+    /* soft floor shadow so items sit on the desk */
+    .desk-item::after {
+      content: '';
+      position: absolute;
+      left: 10%; right: 10%; bottom: -10px; height: 18px;
+      background: radial-gradient(50% 60% at 50% 50%,
+    /* soft floor shadow so items sit on the desk */
+    .desk-item::after {
+      content: '';
+      position: absolute;
+      left: 10%; right: 10%; bottom: -10px; height: 18px;
+      background: ra
     .desk-item:hover { transform: translateY(-5px) scale(1.03); z-index: 99 !important; transition: transform 0.2s ease-in-out, z-index 0s; }
     .desk-item:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
 
@@ -91,13 +212,12 @@
 
     #laptop-link, #secret-button-link { display: block; text-decoration: none; }
 
-    #polaroid .desk-item-content { padding: 0.75rem; padding-bottom: 2.5rem; }
-    #polaroid img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--item-border); }
+    #polaroid .desk-item-content { padding: 0.75rem; padding-bottom: 2.5rem; background: #fff; box-shadow: 0 10px 20px rgba(0,0,0,.25), 0 3px 0 rgba(0,0,0,.06) inset; }
     #polaroid .caption { position: absolute; bottom: 0.5rem; left: 0; right: 0; text-align: center; font-size: 0.875rem; }
 
     /* Illustrated items */
     .desk-item-illustrated { background: transparent !important; border: none !important; box-shadow: none !important; }
-    .desk-item-illustrated img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 3px rgba(0,0,0,0.2)); transition: filter 0.2s ease-in-out; }
+    .desk-item-illustrated img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.25)); transition: filter 0.2s ease-in-out; }
     .desk-item:hover .desk-item-illustrated img { filter: drop-shadow(0 8px 8px rgba(0,0,0,0.25)); }
 
     /* Modal */
@@ -139,6 +259,8 @@
     #laptop-link { top: 15%; left: 50%; transform: translateX(-50%); width: 26rem; height: 16rem; z-index: 20; }
     #notebook { top: 58%; left: 50%; transform: translateX(-40%) rotate(4deg); width: 15rem; height: 12rem; z-index: 30; }
     #post-it { top: 18%; left: 65%; width: 5rem; height: 5rem; z-index: 25; }
+    /* tape above the sticky note */
+    #post-it::before { content:''; position:absolute; top: -8px; left: 50%; transform: translateX(-50%) rotate(-4deg); width: 42px; height: 14px; background: rgba(255,255,255,.8);
     #desk-lamp { top: 2%; left: 3%; width: 9rem; height: 13rem; z-index: 10; }
     #thermometer { top: 5%; left: 15%; width: 3rem; height: 9rem; z-index: 10; }
     #polaroid { top: 25%; left: 5%; width: 7rem; height: 8rem; transform: rotate(-8deg); z-index: 20; }
@@ -532,195 +654,3 @@
     }
 
     function trapFocus(e) {
-      if (e.key !== 'Tab') return;
-      const modal = document.querySelector('.modal-overlay.active');
-      if (!modal) return;
-      const focusables = [...modal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')].filter(el => !el.hasAttribute('disabled'));
-      if (!focusables.length) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-      else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
-    }
-
-    const openMap = {
-      polaroid: 'about-modal',
-      telephone: 'contact-modal',
-      rolodex: 'experience-modal',
-      thermometer: 'education-modal',
-      kindle: 'kindle-modal',
-      'movie-tickets': 'movie-modal',
-      'tv-remote': 'tv-modal',
-      coffee: 'coffee-modal',
-      'crumpled-paper': 'crumpled-paper-modal',
-      'cleo-cat': 'cleo-modal',
-      'post-it': 'post-it-modal',
-      notebook: 'notebook-modal',
-    };
-
-    Object.entries(openMap).forEach(([id, modalId]) => {
-      const el = document.getElementById(id);
-      const modal = document.getElementById(modalId);
-      if (!el || !modal) return;
-      el.addEventListener('click', () => openModal(modal));
-      el.setAttribute('tabindex', '0');
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(modal); }
-      });
-    });
-
-    closeButtons.forEach((btn) => btn.addEventListener('click', closeAllModals));
-    window.addEventListener('click', (e) => { if (e.target.classList.contains('modal-overlay')) closeAllModals(); });
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
-
-    // --- Day/Night Toggle + persist
-    document.getElementById('desk-lamp').addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    });
-
-    // --- Cleo the Cat Animation ---
-    const cleo = document.getElementById('cleo-cat');
-    const desk = document.getElementById('desk-container');
-    let cleoWalkInterval;
-
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function letCleoWalk() {
-      if (prefersReduced) return; // respect reduced motion
-      const fromLeft = Math.random() > 0.5;
-      cleo.style.transition = 'none';
-      if (fromLeft) {
-        cleo.style.left = '-100px';
-        cleo.style.right = 'auto';
-        cleo.style.transform = 'scaleX(1)';
-      } else {
-        cleo.style.left = 'auto';
-        cleo.style.right = 'calc(100% + 100px)';
-        cleo.style.transform = 'scaleX(-1)';
-      }
-      requestAnimationFrame(() => {
-        const duration = Math.random() * 5 + 5;
-        cleo.style.transition = `left ${duration}s linear, right ${duration}s linear, bottom 1s ease`;
-        if (fromLeft) { cleo.style.left = 'calc(100% + 100px)'; }
-        else { cleo.style.right = 'calc(100% + 100px)'; }
-      });
-    }
-
-    function startCleoWalk() {
-      if (cleoWalkInterval) clearInterval(cleoWalkInterval);
-      letCleoWalk();
-      cleoWalkInterval = setInterval(letCleoWalk, 15000);
-    }
-
-    cleo.addEventListener('click', () => {
-      clearInterval(cleoWalkInterval);
-      const cleoRect = cleo.getBoundingClientRect();
-      const deskRect = desk.getBoundingClientRect();
-      const leftWithinDesk = cleoRect.left - deskRect.left;
-      cleo.style.transition = 'left 1s ease, bottom 1s ease, right 1s ease';
-      cleo.style.left = `${leftWithinDesk}px`;
-      cleo.style.right = 'auto';
-      requestAnimationFrame(() => {
-        cleo.style.left = 'auto';
-        cleo.style.right = '5%';
-        cleo.style.bottom = '5%';
-      });
-    });
-
-    const cleoModal = document.getElementById('cleo-modal');
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((m) => {
-        if (m.attributeName === 'class' && !cleoModal.classList.contains('active')) {
-          startCleoWalk();
-        }
-      });
-    });
-    observer.observe(cleoModal, { attributes: true });
-    startCleoWalk();
-
-    // --- Firestore Logic ---
-    async function authAndInitFirestore() {
-      try {
-        await signInAnonymously(auth);
-        setupFirestoreListeners();
-      } catch (error) {
-        console.error('Authentication failed:', error);
-        alert('Anonymous sign-in failed. Check Firebase Authorized Domains and that Anonymous is enabled.');
-      }
-    }
-
-    function setupFirestoreListeners() {
-      // Post-it Notes
-      const postItForm = document.getElementById('post-it-form');
-      const postItInput = document.getElementById('post-it-input');
-      const postItDisplay = document.getElementById('post-it-display');
-      const postItsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'post-it-notes');
-
-      async function safeAdd(ref, data, button) {
-        try {
-          if (button) button.disabled = true;
-          await addDoc(ref, data);
-        } catch (err) {
-          console.error('Error saving:', err);
-          alert('Sorry, saving failed. Please try again.');
-        } finally {
-          if (button) button.disabled = false;
-        }
-      }
-
-      postItForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const noteText = postItInput.value.trim();
-        if (noteText) {
-          await safeAdd(postItsCollection, { text: noteText, createdAt: serverTimestamp() }, postItForm.querySelector('button'));
-          postItInput.value = '';
-        }
-      });
-
-      const postItQuery = query(postItsCollection, orderBy('createdAt', 'desc'), limit(5));
-      onSnapshot(postItQuery, (snapshot) => {
-        postItDisplay.innerHTML = '';
-        snapshot.forEach((doc) => {
-          const note = document.createElement('div');
-          note.className = 'note';
-          note.textContent = doc.data().text;
-          postItDisplay.appendChild(note);
-        });
-      }, (error) => console.error('Error fetching post-its:', error));
-
-      // Notebook entries
-      const notebookForm = document.getElementById('notebook-form');
-      const notebookTitleInput = document.getElementById('notebook-title-input');
-      const notebookStoryInput = document.getElementById('notebook-story-input');
-      const notebookDisplay = document.getElementById('notebook-display');
-      const notebookCollection = collection(db, 'artifacts', appId, 'public', 'data', 'notebook-entries');
-
-      notebookForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = notebookTitleInput.value.trim();
-        const story = notebookStoryInput.value.trim();
-        if (title && story) {
-          await safeAdd(notebookCollection, { title, story, createdAt: serverTimestamp() }, notebookForm.querySelector('button'));
-          notebookTitleInput.value = '';
-          notebookStoryInput.value = '';
-        }
-      });
-
-      const notebookQuery = query(notebookCollection, orderBy('createdAt', 'desc'), limit(10));
-      onSnapshot(notebookQuery, (snapshot) => {
-        notebookDisplay.innerHTML = '';
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          const entry = document.createElement('div');
-          entry.className = 'notebook-entry';
-          entry.innerHTML = `<h4 class="font-semibold text-lg">${data.title}</h4><p class="text-sm text-gray-600">${data.story}</p>`;
-          notebookDisplay.appendChild(entry);
-        });
-      }, (error) => console.error('Error fetching notebook entries:', error));
-    }
-
-    authAndInitFirestore();
-  </script>
-</body>
-</html>
