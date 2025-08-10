@@ -41,90 +41,7 @@
     }
     @media (prefers-reduced-motion: reduce) {
       body { perspective: none; }
-      #desk-container {
-      position: relative;
-      width: 90vw;
-      height: 90vh;
-      max-width: 1400px;
-      max-height: 800px;
-      background-image: url('Desk.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-color: #2f2f2f; /* prevents white flash before image */
-      overflow: hidden;
-      transition: filter 0.3s ease, transform 0.5s ease;
-      border-radius: 20px;
-      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.4);
-      transform: rotateX(8deg);
-      filter: brightness(0.98) contrast(1.05);
-    }
-    /* vignette + subtle grain to make the desk feel physical */
-    #desk-container::before {
-      content: '';
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
-      mix-blend-mode: multiply; opacity: .8;
-    }
-    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
-    /* vignette + subtle grain to make the desk feel physical */
-    #desk-container::before {
-      content: '';
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
-      mix-blend-mode: multiply; opacity: .8;
-    }
-    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
-    /* vignette + subtle grain to make the desk feel physical */
-    #desk-container::before {
-      content: '';
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
-      mix-blend-mode: multiply; opacity: .8;
-    }
-    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
-    /* vignette + subtle grain to make the desk feel physical */
-    #desk-container::before {
-      content: '';
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
-      mix-blend-mode: multiply; opacity: .8;
-    }
-    .dark #desk-container { filter: brightness(0.6) contrast(1.05); }
-    /* vignette + subtle grain to make the desk feel physical */
-    #desk-container::before {
-      content: '';
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
-      mix-blend-mode: multiply; opacity: .8;
-    }
-    .dark #desk-container { filter: brightness(0.6) contrast(1.05); } 90vh;
-      max-width: 1400px;
-      max-height: 800px;
-      background-image: url('Desk.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-color: #2f2f2f; /* prevents white flash before image */
-      overflow: hidden;
-      transition: filter 0.3s ease, transform 0.5s ease;
-      border-radius: 20px;
-      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.4);
-      transform: rotateX(8deg);
-      filter: brightness(0.98) contrast(1.05);
-    }
-    /* vignette + subtle grain to make the desk feel physical */
-    #desk-container::before {
-      content: '';
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%);
-      mix-blend-mode: multiply; opacity: .8;
-    }
-    .dark #desk
+      #desk-container { transform: none !important; transition: none !important; }
       #cleo-cat { transition: none !important; }
     }
 
@@ -153,44 +70,6 @@
       transition: transform 0.2s ease-in-out, z-index 0s 0.2s;
       cursor: pointer;
     }
-    /* soft floor shadow so items sit on the desk */
-    .desk-item::after {
-      content: '';
-      position: absolute;
-      left: 10%; right: 10%; bottom: -10px; height: 18px;
-      background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
-      filter: blur(6px);
-      opacity: .35;
-      pointer-events: none;
-      z-index: -1;
-    }
-    .desk-item:hover { transform: translateY(-5px) scale(1.03); z-index: 99 !important; transition: transform 0.2s ease-in-out, z-index 0s; }
-    .desk-item:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
-    /* soft floor shadow so items sit on the desk */
-    .desk-item::after {
-      content: '';
-      position: absolute;
-      left: 10%; right: 10%; bottom: -10px; height: 18px;
-      background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
-      filter: blur(6px);
-      opacity: .35;
-      pointer-events: none;
-      z-index: -1;
-    }
-    .desk-item:hover { transform: translateY(-5px) scale(1.03); z-index: 99 !important; transition: transform 0.2s ease-in-out, z-index 0s; }
-    .desk-item:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
-    /* soft floor shadow so items sit on the desk */
-    .desk-item::after {
-      content: '';
-      position: absolute;
-      left: 10%; right: 10%; bottom: -10px; height: 18px;
-      background: radial-gradient(50% 60% at 50% 50%,
-    /* soft floor shadow so items sit on the desk */
-    .desk-item::after {
-      content: '';
-      position: absolute;
-      left: 10%; right: 10%; bottom: -10px; height: 18px;
-      background: ra
     .desk-item:hover { transform: translateY(-5px) scale(1.03); z-index: 99 !important; transition: transform 0.2s ease-in-out, z-index 0s; }
     .desk-item:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
 
@@ -212,12 +91,13 @@
 
     #laptop-link, #secret-button-link { display: block; text-decoration: none; }
 
-    #polaroid .desk-item-content { padding: 0.75rem; padding-bottom: 2.5rem; background: #fff; box-shadow: 0 10px 20px rgba(0,0,0,.25), 0 3px 0 rgba(0,0,0,.06) inset; }
+    #polaroid .desk-item-content { padding: 0.75rem; padding-bottom: 2.5rem; }
+    #polaroid img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--item-border); }
     #polaroid .caption { position: absolute; bottom: 0.5rem; left: 0; right: 0; text-align: center; font-size: 0.875rem; }
 
     /* Illustrated items */
     .desk-item-illustrated { background: transparent !important; border: none !important; box-shadow: none !important; }
-    .desk-item-illustrated img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.25)); transition: filter 0.2s ease-in-out; }
+    .desk-item-illustrated img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 3px rgba(0,0,0,0.2)); transition: filter 0.2s ease-in-out; }
     .desk-item:hover .desk-item-illustrated img { filter: drop-shadow(0 8px 8px rgba(0,0,0,0.25)); }
 
     /* Modal */
@@ -259,8 +139,6 @@
     #laptop-link { top: 15%; left: 50%; transform: translateX(-50%); width: 26rem; height: 16rem; z-index: 20; }
     #notebook { top: 58%; left: 50%; transform: translateX(-40%) rotate(4deg); width: 15rem; height: 12rem; z-index: 30; }
     #post-it { top: 18%; left: 65%; width: 5rem; height: 5rem; z-index: 25; }
-    /* tape above the sticky note */
-    #post-it::before { content:''; position:absolute; top: -8px; left: 50%; transform: translateX(-50%) rotate(-4deg); width: 42px; height: 14px; background: rgba(255,255,255,.8);
     #desk-lamp { top: 2%; left: 3%; width: 9rem; height: 13rem; z-index: 10; }
     #thermometer { top: 5%; left: 15%; width: 3rem; height: 9rem; z-index: 10; }
     #polaroid { top: 25%; left: 5%; width: 7rem; height: 8rem; transform: rotate(-8deg); z-index: 20; }
@@ -551,12 +429,12 @@
       <p>Cleo came into my life on March 8th, 2025—yes, on International Women's Day, which feels just right. She was a three-month-old orange Abyssinian, and from the start, she was long, muscular, and absolutely gorgeous.</p>
       <p>She's named after the great queen Cleopatra, because Cleo herself is nothing short of royalty. She's confident, social, and incredibly intelligent. She even taught herself how to play fetch, a skill she's very proud of. She's the true ruler of this desk, and I just love her for it.</p>
       <div class="cleo-gallery mt-6">
-        <img src="IMG-20250810-WA0005.jpg" alt="Cleo sleeping" loading="lazy" />
+         <img src="IMG-20250810-WA0005.jpg" alt="Cleo sleeping" loading="lazy" />
         <img src="IMG-20250810-WA0006.jpg" alt="Cleo stretching" loading="lazy" />
         <img src="IMG-20250810-WA0004.jpg" alt="Cleo looking sleepy" loading="lazy" />
         <img src="IMG-20250810-WA0008.jpg" alt="Cleo sitting on a mat" loading="lazy" />
         <img src="IMG-20250504-WA0011.jpg" alt="A close-up of Cleo" loading="lazy" />
-        <img src="IMG-20250810-WA0007.jpg" alt="Cleo looking like Scooby-Doo" loading="lazy" />
+        <img src="IMG-20250810-WA0007.jpg" alt="Cleo looking like Scooby-Doo" loading="lazy"/>
       </div>
     </div>
   </div>
@@ -654,7 +532,7 @@
     }
 
     function trapFocus(e) {
-  if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab') return;
       const modal = document.querySelector('.modal-overlay.active');
       if (!modal) return;
       const focusables = [...modal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')].filter(el => !el.hasAttribute('disabled'));
@@ -665,7 +543,6 @@
       else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
     }
 
-    // Openers
     const openMap = {
       polaroid: 'about-modal',
       telephone: 'contact-modal',
@@ -686,7 +563,6 @@
       const modal = document.getElementById(modalId);
       if (!el || !modal) return;
       el.addEventListener('click', () => openModal(modal));
-      // keyboard accessible
       el.setAttribute('tabindex', '0');
       el.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(modal); }
@@ -766,15 +642,11 @@
     // --- Firestore Logic ---
     async function authAndInitFirestore() {
       try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
+        await signInAnonymously(auth);
         setupFirestoreListeners();
       } catch (error) {
         console.error('Authentication failed:', error);
-        // Optional: surface a small toast
+        alert('Anonymous sign-in failed. Check Firebase Authorized Domains and that Anonymous is enabled.');
       }
     }
 
@@ -783,7 +655,7 @@
       const postItForm = document.getElementById('post-it-form');
       const postItInput = document.getElementById('post-it-input');
       const postItDisplay = document.getElementById('post-it-display');
-      const postItsCollection = collection(db, `/artifacts/${appId}/public/data/post-it-notes`);
+      const postItsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'post-it-notes');
 
       async function safeAdd(ref, data, button) {
         try {
@@ -822,7 +694,7 @@
       const notebookTitleInput = document.getElementById('notebook-title-input');
       const notebookStoryInput = document.getElementById('notebook-story-input');
       const notebookDisplay = document.getElementById('notebook-display');
-      const notebookCollection = collection(db, `/artifacts/${appId}/public/data/notebook-entries`);
+      const notebookCollection = collection(db, 'artifacts', appId, 'public', 'data', 'notebook-entries');
 
       notebookForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -852,3 +724,5 @@
   </script>
 </body>
 </html>
+
+
