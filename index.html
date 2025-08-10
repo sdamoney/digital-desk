@@ -136,6 +136,7 @@
     .notebook-entry:last-child { border-bottom: none; }
 
     /* Positions & Z-Index */
+    /* Note: removed dead rules for #laptop and #secret-button, using *-link ids instead */
     #laptop-link { top: 15%; left: 50%; transform: translateX(-50%); width: 26rem; height: 16rem; z-index: 20; }
     #notebook { top: 58%; left: 50%; transform: translateX(-40%) rotate(4deg); width: 15rem; height: 12rem; z-index: 30; }
     #post-it { top: 18%; left: 65%; width: 5rem; height: 5rem; z-index: 25; }
@@ -429,7 +430,7 @@
       <p>Cleo came into my life on March 8th, 2025—yes, on International Women's Day, which feels just right. She was a three-month-old orange Abyssinian, and from the start, she was long, muscular, and absolutely gorgeous.</p>
       <p>She's named after the great queen Cleopatra, because Cleo herself is nothing short of royalty. She's confident, social, and incredibly intelligent. She even taught herself how to play fetch, a skill she's very proud of. She's the true ruler of this desk, and I just love her for it.</p>
       <div class="cleo-gallery mt-6">
-         <img src="IMG-20250810-WA0005.jpg" alt="Cleo sleeping" loading="lazy" />
+        <img src="IMG-20250810-WA0005.jpg" alt="Cleo sleeping" loading="lazy" />
         <img src="IMG-20250810-WA0006.jpg" alt="Cleo stretching" loading="lazy" />
         <img src="IMG-20250810-WA0004.jpg" alt="Cleo looking sleepy" loading="lazy" />
         <img src="IMG-20250810-WA0008.jpg" alt="Cleo sitting on a mat" loading="lazy" />
@@ -485,7 +486,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Theme: restore user's preference or system default
@@ -494,16 +495,8 @@
       document.body.classList.add('dark');
     }
 
-    // Your Firebase config (anonymous sign-in)
-    const firebaseConfig = {
-      apiKey: "AIzaSyCQrV1LUlaDv0mWZv04rUmysTp7D7h6Njw",
-      authDomain: "digital-desk-47759.firebaseapp.com",
-      projectId: "digital-desk-47759",
-      storageBucket: "digital-desk-47759.firebasestorage.app",
-      messagingSenderId: "1005169541607",
-      appId: "1:1005169541607:web:aa00eb4bcedb1fc1473d42"
-    };
-    const appId = 'digital-desk';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "AIza...", authDomain: "...", projectId: "..." };
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'digital-desk';
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -526,6 +519,7 @@
       closeAllModals();
       lastFocusedEl = document.activeElement;
       modal.classList.add('active');
+      // focus first focusable element in modal
       const focusables = modal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
       if (focusables.length) focusables[0].focus();
       document.addEventListener('keydown', trapFocus);
@@ -543,6 +537,7 @@
       else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
     }
 
+    // Openers
     const openMap = {
       polaroid: 'about-modal',
       telephone: 'contact-modal',
@@ -563,6 +558,7 @@
       const modal = document.getElementById(modalId);
       if (!el || !modal) return;
       el.addEventListener('click', () => openModal(modal));
+      // keyboard accessible
       el.setAttribute('tabindex', '0');
       el.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(modal); }
@@ -642,11 +638,15 @@
     // --- Firestore Logic ---
     async function authAndInitFirestore() {
       try {
-        await signInAnonymously(auth);
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
         setupFirestoreListeners();
       } catch (error) {
         console.error('Authentication failed:', error);
-        alert('Anonymous sign-in failed. Check Firebase Authorized Domains and that Anonymous is enabled.');
+        // Optional: surface a small toast
       }
     }
 
@@ -655,7 +655,7 @@
       const postItForm = document.getElementById('post-it-form');
       const postItInput = document.getElementById('post-it-input');
       const postItDisplay = document.getElementById('post-it-display');
-      const postItsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'post-it-notes');
+      const postItsCollection = collection(db, `/artifacts/${appId}/public/data/post-it-notes`);
 
       async function safeAdd(ref, data, button) {
         try {
@@ -694,7 +694,7 @@
       const notebookTitleInput = document.getElementById('notebook-title-input');
       const notebookStoryInput = document.getElementById('notebook-story-input');
       const notebookDisplay = document.getElementById('notebook-display');
-      const notebookCollection = collection(db, 'artifacts', appId, 'public', 'data', 'notebook-entries');
+      const notebookCollection = collection(db, `/artifacts/${appId}/public/data/notebook-entries`);
 
       notebookForm.addEventListener('submit', async (e) => {
         e.preventDefault();
